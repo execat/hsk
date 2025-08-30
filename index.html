@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Batch Hanzi Stroke Order Viewer</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.2/dist/hanzi-writer.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Batch Hanzi Stroke Order Viewer</h1>
+      <div class="panel">
+        <textarea id="charsInput" placeholder="Paste characters here (HSK list, up to ~500 at once). Newlines, spaces, and non‑Han characters are ignored.">记的得一点点今天学习快乐学习中国文化汉字手写联系起来因为所以但是比较非常谢谢再见我们你们他们好学习天天向上</textarea>
+        <div class="controls">
+          <div class="ctrl">
+            <h3>Rendering</h3>
+            <label><span>Cell size (px)</span><input id="size" type="number" min="96" max="220" step="4" value="150"></label>
+            <label><span>Padding (px)</span><input id="padding" type="number" min="0" max="30" step="1" value="6"></label>
+            <label><span>Show outline while animating</span><input id="showOutline" type="checkbox" checked></label>
+            <label><span>Max characters</span><input id="maxChars" type="number" min="1" max="1000" value="500"></label>
+          </div>
+          <div class="ctrl">
+            <h3>Animation</h3>
+            <label><span>Stroke speed (×)</span><input id="speed" type="range" min="0.5" max="6" step="0.1" value="1.8"></label>
+            <label><span>Delay between strokes (ms)</span><input id="delayBetweenStrokes" type="number" min="0" max="1200" step="10" value="20"></label>
+            <label><span>Delay between loops (ms)</span><input id="delayBetweenLoops" type="number" min="0" max="6000" step="50" value="1000"></label>
+          </div>
+          <div class="ctrl">
+            <h3>Input</h3>
+            <label><span>Deduplicate characters</span><input id="dedupe" type="checkbox" checked></label>
+            <label><span>Sort by Unicode</span><input id="sort" type="checkbox"></label>
+          </div>
+          <div class="actions">
+            <button class="btn" id="renderBtn">Render list</button>
+            <button class="btn secondary" id="clearBtn" title="Clear current grid">Clear</button>
+            <button class="btn danger" id="rebuildBtn" title="Rebuild grid with current settings">Rebuild</button>
+          </div>
+          <div class="hint">Tip: scrolling will lazy‑load and auto‑loop animations. Use “Rebuild” after tweaking settings.</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="count" id="count"></div>
+    <div id="grid" class="grid"></div>
+    <div id="empty" class="empty" style="display:none">Paste characters above and click <strong>Render list</strong>.</div>
+    <div class="footer-note">Powered by Hanzi Writer. Character data is loaded on‑demand from the public dataset.
+    </div>
+  </main>
+
+  <div class="sticky-tools">
+    <button class="fab" id="toTop" title="Back to top">↑</button>
+  </div>
+
+<script src="main.js"></script>
+</body>
+</html>
