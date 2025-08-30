@@ -33,3 +33,17 @@ main{max-width:1100px;margin:16px auto;padding:0 16px}
 .footer-note{color:var(--muted);font-size:12px;text-align:center;margin:16px 0 40px}
 .sticky-tools{position:fixed;right:14px;bottom:14px;display:flex;flex-direction:column;gap:8px}
 .fab{background:var(--accent);color:#001522;border-radius:999px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;font-weight:900;box-shadow:0 8px 24px rgba(76,201,240,.35);cursor:pointer}
+
+/* Detailed character information styles */
+.detailed-info{background:var(--card);border:1px solid #1b1f2a;border-radius:12px;padding:12px;margin-top:8px;font-size:13px;line-height:1.4;display:none}
+.detailed-info.show{display:block}
+.char-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-weight:600}
+.char-traditional{color:var(--muted);font-size:12px}
+.char-pinyin{color:var(--accent);font-weight:500}
+.char-definition{color:var(--fg);margin-bottom:8px}
+.char-section{margin-bottom:6px}
+.char-section-title{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px}
+.char-radical{color:var(--accent)}
+.char-decomp{font-family:monospace;color:var(--muted)}
+.char-etymology{color:var(--fg);font-style:italic}
+.char-hint{color:var(--muted);font-size:12px}

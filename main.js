@@ -17,11 +17,17 @@
     delayBetweenLoops: document.getElementById('delayBetweenLoops'),
     dedupe: document.getElementById('dedupe'),
     sort: document.getElementById('sort'),
+    showDetails: document.getElementById('showDetails'),
   };
 
   let writers = new Map(); // key: element id → writer instance
   let observer;
   let lastChars = [];
+  
+  // Character data storage
+  let charDictionary = new Map(); // character → definition data
+  let charGraphics = new Map();   // character → stroke data
+  let dataLoaded = false;
 
   function onlyHan(str){
     // Keep only CJK Unified Ideographs (includes Extension A) + common punctuation like "〇"
@@ -49,6 +55,115 @@
   }
 
   function clamp(v,min,max){return Math.min(Math.max(v,min),max)}
+
+  // Data loading functions
+  async function loadCharacterData(){
+    if(dataLoaded) return;
+    
+    try {
+      // Load dictionary data
+      const dictResponse = await fetch('dictionary.txt');
+      const dictText = await dictResponse.text();
+      dictText.split('\n').forEach(line => {
+        if(line.trim()) {
+          try {
+            const data = JSON.parse(line);
+            if(data.character) {
+              charDictionary.set(data.character, data);
+            }
+          } catch(e) {
+            // Skip malformed lines
+          }
+        }
+      });
+
+      // Load graphics data  
+      const graphicsResponse = await fetch('graphics.txt');
+      const graphicsText = await graphicsResponse.text();
+      graphicsText.split('\n').forEach(line => {
+        if(line.trim()) {
+          try {
+            const data = JSON.parse(line);
+            if(data.character) {
+              charGraphics.set(data.character, data);
+            }
+          } catch(e) {
+            // Skip malformed lines
+          }
+        }
+      });
+      
+      dataLoaded = true;
+      console.log(`Loaded ${charDictionary.size} dictionary entries and ${charGraphics.size} graphics entries`);
+    } catch(error) {
+      console.error('Failed to load character data:', error);
+    }
+  }
+
+  function createDetailedInfo(char) {
+    const dictData = charDictionary.get(char);
+    if (!dictData) return null;
+
+    const infoDiv = document.createElement('div');
+    infoDiv.className = 'detailed-info';
+    
+    // Character header with pinyin
+    const header = document.createElement('div');
+    header.className = 'char-header';
+    header.innerHTML = `
+      <span class="char-pinyin">[${(dictData.pinyin || []).join(', ')}]</span>
+    `;
+    infoDiv.appendChild(header);
+
+    // Definition
+    if (dictData.definition) {
+      const defDiv = document.createElement('div');
+      defDiv.className = 'char-definition';
+      defDiv.textContent = dictData.definition;
+      infoDiv.appendChild(defDiv);
+    }
+
+    // Radical
+    if (dictData.radical) {
+      const radicalSection = document.createElement('div');
+      radicalSection.className = 'char-section';
+      radicalSection.innerHTML = `
+        <div class="char-section-title">Radical</div>
+        <span class="char-radical">${dictData.radical}</span>
+      `;
+      infoDiv.appendChild(radicalSection);
+    }
+
+    // Decomposition
+    if (dictData.decomposition && dictData.decomposition !== '？') {
+      const decompSection = document.createElement('div');
+      decompSection.className = 'char-section';
+      decompSection.innerHTML = `
+        <div class="char-section-title">Decomposition</div>
+        <span class="char-decomp">${dictData.decomposition}</span>
+      `;
+      infoDiv.appendChild(decompSection);
+    }
+
+    // Etymology
+    if (dictData.etymology) {
+      const etymSection = document.createElement('div');
+      etymSection.className = 'char-section';
+      etymSection.innerHTML = `
+        <div class="char-section-title">Etymology</div>
+        <div class="char-etymology">${dictData.etymology.type || 'ideographic'}</div>
+      `;
+      if (dictData.etymology.hint) {
+        const hintDiv = document.createElement('div');
+        hintDiv.className = 'char-hint';
+        hintDiv.textContent = `Hint: ${dictData.etymology.hint}`;
+        etymSection.appendChild(hintDiv);
+      }
+      infoDiv.appendChild(etymSection);
+    }
+
+    return infoDiv;
+  }
 
   function clearGrid(){
     writers.forEach(w=>{ /* no public cancel, allow GC */ });
@@ -82,9 +197,20 @@
       const status = document.createElement('div');
       status.className = 'status';
       status.textContent = 'loading…';
+      
       card.appendChild(box);
       card.appendChild(label);
       card.appendChild(status);
+      
+      // Add detailed info if option is enabled and data is available
+      if (els.showDetails.checked && dataLoaded) {
+        const detailedInfo = createDetailedInfo(ch);
+        if (detailedInfo) {
+          detailedInfo.classList.add('show');
+          card.appendChild(detailedInfo);
+        }
+      }
+      
       card.dataset.char = ch;
       card.dataset.size = size;
       frag.appendChild(card);
@@ -146,7 +272,14 @@
   }
 
   // UI wiring
-  els.renderBtn.addEventListener('click', ()=>{
+  els.renderBtn.addEventListener('click', async ()=>{
+    if (els.showDetails.checked && !dataLoaded) {
+      els.renderBtn.textContent = 'Loading data...';
+      els.renderBtn.disabled = true;
+      await loadCharacterData();
+      els.renderBtn.textContent = 'Render list';
+      els.renderBtn.disabled = false;
+    }
     buildGrid(parseInput());
   });
 
@@ -158,6 +291,18 @@
 
   els.toTop.addEventListener('click', ()=>{
     window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  // Handle detailed info toggle
+  els.showDetails.addEventListener('change', ()=>{
+    const detailedInfos = document.querySelectorAll('.detailed-info');
+    detailedInfos.forEach(info => {
+      if (els.showDetails.checked) {
+        info.classList.add('show');
+      } else {
+        info.classList.remove('show');
+      }
+    });
   });
 
   // Initial build with the example text
