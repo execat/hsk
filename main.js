@@ -165,6 +165,14 @@
     return infoDiv;
   }
 
+  function getPinyin(char) {
+    const dictData = charDictionary.get(char);
+    if (dictData && dictData.pinyin && dictData.pinyin.length > 0) {
+      return dictData.pinyin; // Return all pinyin pronunciations
+    }
+    return null;
+  }
+
   function clearGrid(){
     writers.forEach(w=>{ /* no public cancel, allow GC */ });
     writers.clear();
@@ -201,6 +209,24 @@
       card.appendChild(box);
       card.appendChild(label);
       card.appendChild(status);
+      
+      // Always add pinyin if data is available
+      if (dataLoaded) {
+        const pinyinArray = getPinyin(ch);
+        if (pinyinArray) {
+          const pinyinContainer = document.createElement('div');
+          pinyinContainer.className = 'pinyin-container';
+          
+          pinyinArray.forEach(pinyin => {
+            const pinyinEl = document.createElement('div');
+            pinyinEl.className = 'pinyin';
+            pinyinEl.textContent = pinyin;
+            pinyinContainer.appendChild(pinyinEl);
+          });
+          
+          card.appendChild(pinyinContainer);
+        }
+      }
       
       // Add detailed info if option is enabled and data is available
       if (els.showDetails.checked && dataLoaded) {
@@ -273,7 +299,8 @@
 
   // UI wiring
   els.renderBtn.addEventListener('click', async ()=>{
-    if (els.showDetails.checked && !dataLoaded) {
+    // Load data for pinyin display (always) or detailed info (if enabled)
+    if (!dataLoaded) {
       els.renderBtn.textContent = 'Loading data...';
       els.renderBtn.disabled = true;
       await loadCharacterData();
