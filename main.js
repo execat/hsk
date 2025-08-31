@@ -19,6 +19,7 @@
     sort: document.getElementById('sort'),
     showDetails: document.getElementById('showDetails'),
     stickyHeader: document.getElementById('stickyHeader'),
+    denseView: document.getElementById('denseView'),
     settingsToggle: document.getElementById('settingsToggle'),
     controlsWrapper: document.getElementById('controlsWrapper'),
   };
@@ -242,9 +243,20 @@
       
       card.dataset.char = ch;
       card.dataset.size = size;
+      
+      // Apply dense view if enabled
+      if (els.denseView.checked) {
+        card.classList.add('dense');
+      }
+      
       frag.appendChild(card);
     });
     els.grid.appendChild(frag);
+    
+    // Apply dense view to grid if enabled
+    if (els.denseView.checked) {
+      els.grid.classList.add('dense');
+    }
 
     els.count.textContent = `${chars.length} character${chars.length===1?'':'s'}`;
 
@@ -334,6 +346,15 @@
   els.stickyHeader.addEventListener('change', ()=>{
     const header = document.querySelector('header');
     header.classList.toggle('sticky', els.stickyHeader.checked);
+  });
+
+  // Handle dense view toggle
+  els.denseView.addEventListener('change', ()=>{
+    els.grid.classList.toggle('dense', els.denseView.checked);
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+      card.classList.toggle('dense', els.denseView.checked);
+    });
   });
 
   // Handle settings toggle for mobile
