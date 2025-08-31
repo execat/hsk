@@ -62,7 +62,7 @@
     
     try {
       // Load dictionary data
-      const dictResponse = await fetch('dictionary.txt');
+      const dictResponse = await fetch('data/dictionary.txt');
       const dictText = await dictResponse.text();
       dictText.split('\n').forEach(line => {
         if(line.trim()) {
@@ -78,7 +78,7 @@
       });
 
       // Load graphics data  
-      const graphicsResponse = await fetch('graphics.txt');
+      const graphicsResponse = await fetch('data/graphics.txt');
       const graphicsText = await graphicsResponse.text();
       graphicsText.split('\n').forEach(line => {
         if(line.trim()) {
