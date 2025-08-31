@@ -40,12 +40,12 @@ main{max-width:1100px;margin:16px auto;padding:0 16px}
 .fab{background:var(--accent);color:#001522;border-radius:999px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;font-weight:900;box-shadow:0 8px 24px rgba(76,201,240,.35);cursor:pointer}
 
 /* Detailed character information styles */
-.detailed-info{background:var(--card);border:1px solid #1b1f2a;border-radius:12px;padding:12px;margin-top:8px;font-size:13px;line-height:1.4;display:none;flex:1}
+.detailed-info{background:var(--card);border:1px solid #1b1f2a;border-radius:12px;padding:12px;margin-top:8px;font-size:13px;line-height:1.4;display:none;flex:1;width:100%;box-sizing:border-box}
 .detailed-info.show{display:flex;flex-direction:column}
 .char-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-weight:600}
 .char-traditional{color:var(--muted);font-size:12px}
 .char-pinyin{color:var(--accent);font-weight:500}
-.char-definition{color:var(--fg);margin-bottom:8px}
+.char-definition{color:var(--fg);margin-bottom:8px;word-wrap:break-word;overflow-wrap:break-word}
 .char-section{margin-bottom:6px}
 .char-section-title{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px}
 .char-radical{color:var(--accent)}
