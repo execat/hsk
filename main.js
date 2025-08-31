@@ -19,6 +19,8 @@
     sort: document.getElementById('sort'),
     showDetails: document.getElementById('showDetails'),
     stickyHeader: document.getElementById('stickyHeader'),
+    settingsToggle: document.getElementById('settingsToggle'),
+    controlsWrapper: document.getElementById('controlsWrapper'),
   };
 
   let writers = new Map(); // key: element id → writer instance
@@ -332,6 +334,13 @@
   els.stickyHeader.addEventListener('change', ()=>{
     const header = document.querySelector('header');
     header.classList.toggle('sticky', els.stickyHeader.checked);
+  });
+
+  // Handle settings toggle for mobile
+  els.settingsToggle.addEventListener('click', ()=>{
+    els.controlsWrapper.classList.toggle('show');
+    const isOpen = els.controlsWrapper.classList.contains('show');
+    els.settingsToggle.textContent = isOpen ? '⚙️ Hide Settings' : '⚙️ Advanced Settings';
   });
 
   // Load data automatically on page load for pinyin display
