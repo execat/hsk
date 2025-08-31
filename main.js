@@ -18,6 +18,7 @@
     dedupe: document.getElementById('dedupe'),
     sort: document.getElementById('sort'),
     showDetails: document.getElementById('showDetails'),
+    stickyHeader: document.getElementById('stickyHeader'),
   };
 
   let writers = new Map(); // key: element id → writer instance
@@ -324,12 +325,13 @@
   els.showDetails.addEventListener('change', ()=>{
     const detailedInfos = document.querySelectorAll('.detailed-info');
     detailedInfos.forEach(info => {
-      if (els.showDetails.checked) {
-        info.classList.add('show');
-      } else {
-        info.classList.remove('show');
-      }
+      info.classList.toggle('show', els.showDetails.checked);
     });
+  });
+
+  els.stickyHeader.addEventListener('change', ()=>{
+    const header = document.querySelector('header');
+    header.classList.toggle('sticky', els.stickyHeader.checked);
   });
 
   // Load data automatically on page load for pinyin display
