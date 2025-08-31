@@ -210,7 +210,7 @@
       card.appendChild(label);
       card.appendChild(status);
       
-      // Always add pinyin if data is available
+      // Always add pinyin if data is available (independent of detailed info)
       if (dataLoaded) {
         const pinyinArray = getPinyin(ch);
         if (pinyinArray) {
@@ -299,7 +299,7 @@
 
   // UI wiring
   els.renderBtn.addEventListener('click', async ()=>{
-    // Load data for pinyin display (always) or detailed info (if enabled)
+    // Always load data for pinyin display (and detailed info if enabled)
     if (!dataLoaded) {
       els.renderBtn.textContent = 'Loading data...';
       els.renderBtn.disabled = true;
@@ -332,6 +332,13 @@
     });
   });
 
-  // Initial build with the example text
-  buildGrid(parseInput());
+  // Load data automatically on page load for pinyin display
+  loadCharacterData().then(() => {
+    // Initial build with the example text after data loads
+    buildGrid(parseInput());
+  }).catch(error => {
+    console.error('Failed to load data on startup:', error);
+    // Still build grid even if data loading fails
+    buildGrid(parseInput());
+  });
 })();
